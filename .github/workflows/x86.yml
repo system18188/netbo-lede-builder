@@ -72,7 +72,7 @@ jobs:
           ./scripts/feeds install -a
 
       - name: Generate configuration file
-        run: cd openwrt && rm -f ./openwrt/.config*
+        run: cd openwrt && rm -f ./.config*
 
       - name: SSH connection to Actions
         uses: csexton/debugger-action@master
