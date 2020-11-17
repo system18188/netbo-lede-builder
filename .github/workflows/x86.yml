@@ -32,7 +32,7 @@ jobs:
 
   build_openwrt:
 
-    name: Build OpenWrt firmware
+    name: Build OpenWrt x86 firmware
 
     runs-on: ubuntu-latest
 
