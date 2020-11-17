@@ -71,13 +71,13 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
+      - name: Generate configuration file
+        run: cd openwrt && rm -f ./openwrt/.config*
+
       - name: SSH connection to Actions
-        uses: P3TERX/debugger-action@master
+        uses: csexton/debugger-action@master
         if: env.SSH_ACTIONS == 'true'
 
-      # - name: Generate configuration file
-      #   run: cd openwrt && make defconfig
-        
       # - name: Load custom configuration
       #   run: |
       #     [ -e files ] && mv files openwrt/files
