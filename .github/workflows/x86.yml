@@ -23,7 +23,7 @@ env:
   REPO_BRANCH: master
   CONFIG_FILE: x86.config
   DIY_SH: diy.sh
-  SSH_ACTIONS: false
+  SSH_ACTIONS: true
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   TZ: Asia/Shanghai
@@ -64,31 +64,38 @@ jobs:
       - name: copy feeds.conf.default
         run: cp -rf custom/feeds.conf.default openwrt
 
+
       - name: Update feeds
         run: |
           cd openwrt
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
-      - name: Generate configuration file
-        run: cd openwrt && make defconfig
+      - name: SSH connection to Actions
+        uses: P3TERX/debugger-action@master
+        if: env.SSH_ACTIONS == 'true'
+
+      # - name: Generate configuration file
+      #   run: cd openwrt && make defconfig
         
-      - name: Load custom configuration
-        run: |
-          [ -e files ] && mv files openwrt/files
-          [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-          chmod +x $DIY_SH
-          cd openwrt
-          ../$DIY_SH
+      # - name: Load custom configuration
+      #   run: |
+      #     [ -e files ] && mv files openwrt/files
+      #     [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+      #     chmod +x $DIY_SH
+      #     cd openwrt
+      #     ../$DIY_SH
 
       - name: Make download
         run: |
-          cd openwrt && make download -j8
+          cd openwrt
+          make download -j8
           find dl -size -1024c -exec rm -f {} \;
 
       - name: Compile firmware
         run: |
-          cd openwrt && make -j$(nproc) || make -j1 V=s
+          cd openwrt
+          make -j$(nproc) || make -j1 V=s
           echo "======================="
           echo "Space usage:"
           echo "======================="
