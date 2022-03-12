@@ -57,22 +57,21 @@ jobs:
           sudo -E apt-get -y autoremove --purge
           sudo -E apt-get clean
           df -h
-          
+
       - name: Clone source code
         run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
 
       - name: copy feeds.conf.default
-        run: cp -rf custom/feeds.conf.default openwrt
+        run: rm  -rf ./openwrt/feeds.conf.default && cp -rf ./custom/feeds.conf.default ./openwrt
 
 
       - name: Update feeds
         run: |
-          cd openwrt
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a
+          ./openwrt/scripts/feeds update -a
+          ./openwrt/scripts/feeds install -a
 
       - name: Generate configuration file
-        run: cd openwrt && rm -f ./.config*
+        run: cd openwrt && rm -f ./.config
         
       - name: Load custom configuration
         run: |
@@ -95,7 +94,7 @@ jobs:
       - name: Compile firmware
         run: |
           cd openwrt
-          make -j$(nproc) || make -j1 V=s
+          make -j$(nproc) V=s || make -j1 V=s
           echo "======================="
           echo "Space usage:"
           echo "======================="
